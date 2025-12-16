@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Submission form with category selection.
     - Dynamic Home feed with Feedback cards.
     - Detailed Feedback view (`/feedback/view`).
-    - Admin Dashboard (`/admin`) for managing feedback status.
+    - Admin Dashboard (`/admin`) for managing feedback status and deleting items.
 - **Interaction Features**:
     - **Voting**: AJAX-powered upvote/toggle system.
     - **Commenting**: Threaded discussion on feedback items.

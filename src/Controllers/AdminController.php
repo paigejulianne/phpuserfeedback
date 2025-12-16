@@ -35,4 +35,15 @@ class AdminController {
             \App\Helpers\Url::redirect('admin');
         }
     }
+
+    public function delete() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $feedback_id = $_POST['feedback_id'] ?? null;
+            if ($feedback_id) {
+                $feedbackModel = new Feedback();
+                $feedbackModel->delete($feedback_id);
+            }
+            \App\Helpers\Url::redirect('admin');
+        }
+    }
 }

@@ -125,6 +125,11 @@ switch ($path) {
         $controller->updateStatus();
         break;
 
+    case '/admin/delete':
+        $controller = new \App\Controllers\AdminController();
+        $controller->delete();
+        break;
+
     // Profile Routes
     case '/profile':
         $controller = new \App\Controllers\ProfileController();

@@ -58,7 +58,12 @@
                                 </form>
                             </td>
                             <td style="padding: 1rem;">
-                                <a href="#" style="color: var(--danger-color); font-size: 0.9rem;">Delete</a>
+                                <form action="admin/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this feedback?');">
+                                    <input type="hidden" name="feedback_id" value="<?php echo $item['id']; ?>">
+                                    <button type="submit" style="background: none; border: none; padding: 0; color: var(--danger-color); font-size: 0.9rem; cursor: pointer; text-decoration: underline;">
+                                        Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
