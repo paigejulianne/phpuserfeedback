@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Search & Discovery**:
     - Search bar for filtering ideas by title/description.
     - Sorting options: Popular, Newest, Oldest.
+- **API Integration**:
+    - REST API endpoint (`/api/feedback`) for external submissions.
+    - Bearer Token authentication via `api_tokens` table.
+    - Support for "On Behalf Of" posting using `user_email` (auto-creates users if needed).
 - **User Profile**:
     - Profile editing page to update Username, Email, and Password.
 - **Infrastructure**:

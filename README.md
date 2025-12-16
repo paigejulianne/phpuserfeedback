@@ -101,6 +101,42 @@ If you used the setup script, a default admin account is created:
 
 *Please change this password immediately after logging in.*
 
+## 🔌 API Documentation
+
+UserFeedback provides a REST API to submit feedback programmatically.
+
+### Authentication
+All API requests must include a Bearer Token in the Authorization header.
+`Authorization: Bearer YOUR_API_TOKEN`
+
+To generate a token, you can currently use the `generate_token.php` helper script or manually add one to the `api_tokens` table.
+
+### Endpoints
+
+#### `POST /api/feedback`
+Submits a new feedback item.
+
+**Payload:**
+```json
+{
+  "title": "Feedback Title",
+  "description": "Detailed description...",
+  "category_id": 1,
+  "user_email": "user@example.com" 
+}
+```
+
+*   `user_email` (Optional): Submits the feedback on behalf of this email. If the user does not exist, an account is created automatically.
+*   `category_id` (Optional): Defaults to 1.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Feedback created successfully"
+}
+```
+
 ## 📄 License
 
 GPL 2.0

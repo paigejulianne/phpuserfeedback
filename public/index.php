@@ -167,6 +167,12 @@ switch ($path) {
         $controller = new \App\Controllers\ImageController();
         $controller->show();
         break;
+
+    // API Routes
+    case '/api/feedback':
+        $controller = new \App\Controllers\ApiController();
+        $controller->storeFeedback();
+        break;
         
     default:
         http_response_code(404);
