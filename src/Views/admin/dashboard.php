@@ -11,6 +11,7 @@
         <div class="container navbar-content">
             <a href="../public/" class="brand" style="color: white; -webkit-text-fill-color: white;">UserFeedback Admin</a>
             <div class="nav-links">
+                <a href="admin/tokens" class="btn" style="color: white; opacity: 0.8;">API Tokens</a>
                 <a href="../public/" class="btn" style="color: white; opacity: 0.8;">Back to Site</a>
             </div>
         </div>

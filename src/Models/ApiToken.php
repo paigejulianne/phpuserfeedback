@@ -37,4 +37,21 @@ class ApiToken {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $row['user_id'] : false;
     }
+
+    public function getAll() {
+        $query = "SELECT t.*, u.username, u.email 
+                  FROM " . $this->table . " t
+                  JOIN users u ON t.user_id = u.id
+                  ORDER BY t.created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function delete($id) {
+        $query = "DELETE FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }

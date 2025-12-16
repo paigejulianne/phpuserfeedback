@@ -130,6 +130,22 @@ switch ($path) {
         $controller->delete();
         break;
 
+    // Admin Token Routes
+    case '/admin/tokens':
+        $controller = new \App\Controllers\ApiTokenController();
+        $controller->index();
+        break;
+
+    case '/admin/tokens/create':
+        $controller = new \App\Controllers\ApiTokenController();
+        $controller->create();
+        break;
+
+    case '/admin/tokens/revoke':
+        $controller = new \App\Controllers\ApiTokenController();
+        $controller->revoke();
+        break;
+
     // Profile Routes
     case '/profile':
         $controller = new \App\Controllers\ProfileController();
