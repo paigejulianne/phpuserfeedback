@@ -103,4 +103,5 @@ If you used the setup script, a default admin account is created:
 
 ## 📄 License
 
-MIT License
+GPL 2.0
+
