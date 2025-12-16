@@ -11,8 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add loading state visual (optional)
             this.style.opacity = '0.7';
 
+            // Use the absolute site URL provided by the view
+            const endpoint = (window.SITE_URL || '') + '/feedback/vote';
+
             try {
-                const response = await fetch('feedback/vote', {
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -20,23 +23,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ feedback_id: feedbackId })
                 });
 
+                // Check if response is JSON (it might be 404 HTML if path is wrong)
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("Server returned non-JSON response. Possible path error.");
+                }
+
                 const data = await response.json();
 
                 if (data.success) {
+                    // Update count
                     countSpan.textContent = data.newCount;
 
-                    // Simple visual feedback for toggle
+                    // Toggle active state visual
                     if (data.action === 'added') {
-                        this.classList.add('voted');
+                        this.style.borderColor = 'var(--primary-color)';
+                        this.querySelector('svg').style.color = 'var(--primary-color)';
                     } else {
-                        this.classList.remove('voted');
+                        this.style.borderColor = 'var(--border-color)';
+                        this.querySelector('svg').style.color = 'var(--text-secondary)';
                     }
                 } else {
-                    console.error('Vote failed:', data.message);
-                    alert('Could not process vote. Please try again.');
+                    if (data.message === 'Unauthorized') {
+                        window.location.href = '../login';
+                    } else {
+                        alert(data.message || 'Error occurred');
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
+                alert('An error occurred. Please try again. (' + error.message + ')');
             } finally {
                 this.style.opacity = '1';
             }

@@ -15,6 +15,8 @@ class Feedback {
     }
 
     public function getAll($sort = 'popular', $search = '') {
+        // Query to get feedback with category names and vote counts
+        // We do NOT select the BLOB data here for performance, just check if it exists (NOT NULL)
         $query = "SELECT 
                     f.id, 
                     f.title, 
@@ -22,7 +24,8 @@ class Feedback {
                     f.status, 
                     f.created_at, 
                     c.name as category_name,
-                    COUNT(v.user_id) as vote_count
+                    COUNT(v.user_id) as vote_count,
+                    (f.screenshot_data IS NOT NULL) as has_screenshot
                   FROM " . $this->table . " f
                   LEFT JOIN categories c ON f.category_id = c.id
                   LEFT JOIN votes v ON f.id = v.feedback_id";
@@ -44,6 +47,16 @@ class Feedback {
             case 'oldest':
                 $query .= " ORDER BY f.created_at ASC";
                 break;
+            // Admin Sorting
+            case 'title_asc': $query .= " ORDER BY f.title ASC"; break;
+            case 'title_desc': $query .= " ORDER BY f.title DESC"; break;
+            case 'category_asc': $query .= " ORDER BY category_name ASC"; break;
+            case 'category_desc': $query .= " ORDER BY category_name DESC"; break;
+            case 'status_asc': $query .= " ORDER BY f.status ASC"; break;
+            case 'status_desc': $query .= " ORDER BY f.status DESC"; break;
+            case 'votes_asc': $query .= " ORDER BY vote_count ASC"; break;
+            case 'votes_desc': $query .= " ORDER BY vote_count DESC"; break;
+            
             case 'popular':
             default:
                 $query .= " ORDER BY vote_count DESC, f.created_at DESC";
@@ -62,21 +75,22 @@ class Feedback {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create($user_id, $category_id, $title, $description) {
+    public function create($user_id, $category_id, $title, $description, $screenshot_data = null, $screenshot_mime = null) {
         $query = "INSERT INTO " . $this->table . " 
-                  (user_id, category_id, title, description) 
-                  VALUES (:user_id, :category_id, :title, :description)";
+                  (user_id, category_id, title, description, screenshot_data, screenshot_mime) 
+                  VALUES (:user_id, :category_id, :title, :description, :screenshot_data, :screenshot_mime)";
 
         $stmt = $this->conn->prepare($query);
 
-        // Sanitize and bind
         $title = htmlspecialchars(strip_tags($title));
-        $description = htmlspecialchars(strip_tags($description));
+        // Description is already sanitized by Controller using HTMLPurifier
 
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':category_id', $category_id);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':description', $description);
+        $stmt->bindParam(':screenshot_data', $screenshot_data);
+        $stmt->bindParam(':screenshot_mime', $screenshot_mime);
 
         if ($stmt->execute()) {
             return true;
@@ -136,6 +150,8 @@ class Feedback {
                     f.description, 
                     f.status, 
                     f.created_at, 
+                    f.screenshot_mime,
+                    (f.screenshot_data IS NOT NULL) as has_screenshot,
                     c.name as category_name,
                     COUNT(v.user_id) as vote_count
                   FROM " . $this->table . " f
@@ -156,5 +172,13 @@ class Feedback {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id);
         return $stmt->execute();
+    }
+
+    public function getImage($id) {
+        $query = "SELECT screenshot_data, screenshot_mime FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

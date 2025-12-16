@@ -106,7 +106,15 @@
                                 </span>
                             </div>
                             <p style="margin: 0.5rem 0; color: var(--text-secondary); line-height: 1.6;">
-                                <?php echo htmlspecialchars($item['description']); ?>
+                                <?php 
+                                    // Strip tags for home preview, standardizing look
+                                    $preview = strip_tags($item['description']);
+                                    if (strlen($preview) > 150) {
+                                        echo htmlspecialchars(substr($preview, 0, 150)) . '...';
+                                    } else {
+                                        echo htmlspecialchars($preview);
+                                    }
+                                ?>
                             </p>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.9rem;">
                                 <span style="color: var(--primary-color); font-weight: 600;">
@@ -123,6 +131,9 @@
         </section>
     </main>
 
+    <script>
+        window.SITE_URL = "<?php echo \App\Helpers\Url::base(); ?>";
+    </script>
     <script src="assets/main.js"></script>
 </body>
 </html>

@@ -161,6 +161,12 @@ switch ($path) {
         $controller = new \App\Controllers\ForgotPasswordController();
         $controller->reset();
         break;
+
+    // Image Route
+    case '/image':
+        $controller = new \App\Controllers\ImageController();
+        $controller->show();
+        break;
         
     default:
         http_response_code(404);

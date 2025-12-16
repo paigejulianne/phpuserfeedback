@@ -14,10 +14,14 @@ class AdminController {
     }
 
     public function index() {
+        $sort = $_GET['sort'] ?? 'newest';
         $feedbackModel = new Feedback();
-        $feedbacks = $feedbackModel->getAll();
+        $feedbacks = $feedbackModel->getAll($sort);
         
-        view('admin/dashboard', ['feedbacks' => $feedbacks]);
+        view('admin/dashboard', [
+            'feedbacks' => $feedbacks,
+            'currentSort' => $sort
+        ]);
     }
 
     public function updateStatus() {

@@ -21,7 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Admin Dashboard (`/admin`) for managing feedback status and deleting items.
 - **Interaction Features**:
     - **Voting**: AJAX-powered upvote/toggle system.
+        - *Update*: Prevented users from voting on their own feedback submissions.
     - **Commenting**: Threaded discussion on feedback items.
+- **Content & Media**:
+    - **Rich Text Editor**: Integrated QuillJS for rich formatting in feedback descriptions and comments.
+    - **File Attachments**: Added ability to upload screenshot images with feedback and comments.
+    - **Sanitization**: Integrated `HTMLPurifier` to securely sanitize rich text input.
+    - **Home Preview**: Cleaned up feedback cards to show stripped/truncated text preview instead of raw HTML.
 - **Search & Discovery**:
     - Search bar for filtering ideas by title/description.
     - Sorting options: Popular, Newest, Oldest.

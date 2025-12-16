@@ -19,21 +19,69 @@
     <main class="container" style="margin-top: 2rem;">
         <h1 style="margin-bottom: 2rem;">Feedback Management</h1>
 
+        <?php
+        function getSortLink($column, $currentSort) {
+            // Determine direction
+            $parts = explode('_', $currentSort);
+            $currentCol = implode('_', array_slice($parts, 0, -1)); // Handle multi-word cols if any, though we use simple keys
+            // Actually our keys are title_asc. $column would be 'title'.
+            
+            // Simpler: Check if current sort starts with column
+            if (strpos($currentSort, $column) === 0) {
+                // If currently asc, switch to desc
+                if (strpos($currentSort, '_asc') !== false) {
+                    return "?sort=" . $column . "_desc";
+                }
+                return "?sort=" . $column . "_asc";
+            }
+            // Default to desc for stats, asc for text? 
+            if ($column === 'votes') return "?sort=" . $column . "_desc";
+            return "?sort=" . $column . "_asc";
+        }
+        
+        function getSortIcon($column, $currentSort) {
+             if (strpos($currentSort, $column) === 0) {
+                 return strpos($currentSort, '_asc') !== false ? ' ↑' : ' ↓';
+             }
+             return '';
+        }
+        ?>
+
         <div style="background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden;">
             <table style="width: 100%; border-collapse: collapse;">
                 <thead style="background: #f8fafc; border-bottom: 2px solid var(--border-color);">
                     <tr>
-                        <th style="text-align: left; padding: 1rem; font-weight: 600;">Title</th>
-                        <th style="text-align: left; padding: 1rem; font-weight: 600;">Category</th>
-                        <th style="text-align: left; padding: 1rem; font-weight: 600;">Votes</th>
-                         <th style="text-align: left; padding: 1rem; font-weight: 600;">Status</th>
+                        <th style="text-align: left; padding: 1rem; font-weight: 600;">
+                            <a href="<?php echo getSortLink('title', $currentSort); ?>" style="color: inherit; text-decoration: none;">
+                                Title<?php echo getSortIcon('title', $currentSort); ?>
+                            </a>
+                        </th>
+                        <th style="text-align: left; padding: 1rem; font-weight: 600;">
+                            <a href="<?php echo getSortLink('category', $currentSort); ?>" style="color: inherit; text-decoration: none;">
+                                Category<?php echo getSortIcon('category', $currentSort); ?>
+                            </a>
+                        </th>
+                        <th style="text-align: left; padding: 1rem; font-weight: 600;">
+                            <a href="<?php echo getSortLink('votes', $currentSort); ?>" style="color: inherit; text-decoration: none;">
+                                Votes<?php echo getSortIcon('votes', $currentSort); ?>
+                            </a>
+                        </th>
+                         <th style="text-align: left; padding: 1rem; font-weight: 600;">
+                            <a href="<?php echo getSortLink('status', $currentSort); ?>" style="color: inherit; text-decoration: none;">
+                                Status<?php echo getSortIcon('status', $currentSort); ?>
+                            </a>
+                        </th>
                         <th style="text-align: left; padding: 1rem; font-weight: 600;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($feedbacks as $item): ?>
                         <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 1rem;"><?php echo htmlspecialchars($item['title']); ?></td>
+                            <td style="padding: 1rem;">
+                                <a href="../feedback/view?id=<?php echo $item['id']; ?>" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">
+                                    <?php echo htmlspecialchars($item['title']); ?>
+                                </a>
+                            </td>
                             <td style="padding: 1rem;">
                                 <span style="font-size: 0.85rem; padding: 0.2rem 0.6rem; background: var(--background-bg); border-radius: 2rem;">
                                     <?php echo htmlspecialchars($item['category_name'] ?? 'General'); ?>

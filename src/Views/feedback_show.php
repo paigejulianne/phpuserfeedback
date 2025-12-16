@@ -1,10 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($feedback['title']); ?> - UserFeedback</title>
     <link rel="stylesheet" href="../assets/index.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        .ql-editor { padding: 0; min-height: auto; }
+        .content-body img { max-width: 100%; border-radius: 8px; margin-top: 1rem; }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -36,7 +39,7 @@
                 </div>
 
                 <!-- Content -->
-                <div style="flex: 1;">
+                <div style="flex: 1; overflow: hidden;">
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
                         <h1 style="font-size: 1.8rem; line-height: 1.3; margin: 0;"><?php echo htmlspecialchars($feedback['title']); ?></h1>
                     </div>
@@ -53,7 +56,17 @@
                         </span>
                     </div>
 
-                    <p style="font-size: 1.1rem; line-height: 1.7; color: var(--text-primary); white-space: pre-wrap;"><?php echo htmlspecialchars($feedback['description']); ?></p>
+                    <div class="content-body" style="font-size: 1.1rem; line-height: 1.7; color: var(--text-primary); margin-bottom: 1rem;">
+                        <?php echo $feedback['description']; // Safe HTML ?>
+                    </div>
+
+                    <?php if ($feedback['has_screenshot']): ?>
+                        <div style="margin-top: 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; display: inline-block;">
+                            <a href="../image?type=feedback&id=<?php echo $feedback['id']; ?>" target="_blank">
+                                <img src="../image?type=feedback&id=<?php echo $feedback['id']; ?>" alt="Screenshot" style="max-height: 300px; display: block;">
+                            </a>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -74,9 +87,16 @@
                                 <span style="font-weight: 600;"><?php echo htmlspecialchars($comment['username']); ?></span>
                                 <span style="font-size: 0.85rem; color: var(--text-secondary);"><?php echo date('M j, g:i a', strtotime($comment['created_at'])); ?></span>
                             </div>
-                            <div style="color: var(--text-primary); line-height: 1.5;">
-                                <?php echo nl2br(htmlspecialchars($comment['body'])); ?>
+                            <div class="content-body" style="color: var(--text-primary); line-height: 1.5;">
+                                <?php echo $comment['body']; // Safe HTML ?>
                             </div>
+                            <?php if (!empty($comment['has_screenshot'])): ?>
+                                <div style="margin-top: 1rem;">
+                                    <a href="../image?type=comment&id=<?php echo $comment['id']; ?>" target="_blank">
+                                        <img src="../image?type=comment&id=<?php echo $comment['id']; ?>" alt="Attachment" style="max-height: 200px; border-radius: 4px; border: 1px solid var(--border-color);">
+                                    </a>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -86,12 +106,23 @@
             <?php if ($isLoggedIn): ?>
                 <div class="card">
                     <h4 style="margin-bottom: 1rem;">Add a comment</h4>
-                    <form action="../comments/add" method="POST">
+                    <form action="../comments/add" method="POST" enctype="multipart/form-data" id="commentForm">
                         <input type="hidden" name="feedback_id" value="<?php echo $feedback['id']; ?>">
+                        
                         <div style="margin-bottom: 1rem;">
-                            <textarea name="body" required rows="3" placeholder="What are your thoughts?"
-                                      style="width: 100%; padding: 1rem; border: 2px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; font-size: 1rem; resize: vertical;"></textarea>
+                            <input type="hidden" name="body" id="commentBody">
+                            <div id="commentEditor" style="height: 120px; background: white;"></div>
                         </div>
+
+                        <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
+                            <label style="font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                Attach Image
+                                <input type="file" name="screenshot" accept="image/*" style="display: none;" onchange="document.getElementById('fileName').textContent = this.files[0] ? this.files[0].name : '';">
+                            </label>
+                            <span id="fileName" style="font-size: 0.85rem; color: var(--text-secondary);"></span>
+                        </div>
+
                         <div style="text-align: right;">
                             <button type="submit" class="btn btn-primary">Post Comment</button>
                         </div>
@@ -108,6 +139,34 @@
 
     </main>
 
+    <script>
+        window.SITE_URL = "<?php echo \App\Helpers\Url::base(); ?>";
+    </script>
     <script src="../assets/main.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        <?php if ($isLoggedIn): ?>
+        var quill = new Quill('#commentEditor', {
+            theme: 'snow',
+            placeholder: 'What are your thoughts?',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+                ]
+            }
+        });
+
+        document.getElementById('commentForm').onsubmit = function() {
+            var input = document.getElementById('commentBody');
+            input.value = quill.root.innerHTML;
+            
+            if (quill.getText().trim().length === 0) {
+                alert('Please enter a comment.');
+                return false;
+            }
+        };
+        <?php endif; ?>
+    </script>
 </body>
 </html>
