@@ -81,22 +81,23 @@ class ForgotPasswordController {
     }
 
     private function sendEmail($to, $token) {
-        $config = require __DIR__ . '/../Config/config.php';
+        $siteName = \App\Helpers\Config::get('site_name', 'UserFeedback');
+        
         $mail = new PHPMailer(true);
         $resetLink = "http://" . $_SERVER['HTTP_HOST'] . Url::to('password/reset/form?token=' . $token);
 
         try {
             //Server settings
             $mail->isSMTP();
-            $mail->Host       = $config['mail_host'];
+            $mail->Host       = \App\Helpers\Config::get('mail_host');
             $mail->SMTPAuth   = true;
-            $mail->Username   = $config['mail_user'];
-            $mail->Password   = $config['mail_pass'];
+            $mail->Username   = \App\Helpers\Config::get('mail_user');
+            $mail->Password   = \App\Helpers\Config::get('mail_pass');
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = $config['mail_port'];
+            $mail->Port       = \App\Helpers\Config::get('mail_port');
 
             //Recipients
-            $mail->setFrom($config['mail_from'], $config['mail_from_name']);
+            $mail->setFrom(\App\Helpers\Config::get('mail_from'), $siteName);
             $mail->addAddress($to);
 
             //Content

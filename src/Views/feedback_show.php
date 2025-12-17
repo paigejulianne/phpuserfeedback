@@ -1,7 +1,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($feedback['title']); ?> - UserFeedback</title>
+    <title><?php echo htmlspecialchars($feedback['title']); ?> - <?php echo \App\Helpers\Config::get('site_name'); ?></title>
     <link rel="stylesheet" href="../assets/index.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar">
         <div class="container navbar-content">
-            <a href="../" class="brand">UserFeedback</a>
+            <a href="../" class="brand"><?php echo \App\Helpers\Config::get('site_name'); ?></a>
             <div class="nav-links">
                 <a href="../" class="btn" style="color: var(--text-secondary);">Back to Home</a>
             </div>

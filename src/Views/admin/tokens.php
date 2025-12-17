@@ -9,7 +9,7 @@
 <body>
     <nav class="navbar" style="background: #1e293b; border-bottom: none;">
         <div class="container navbar-content">
-            <a href="../admin" class="brand" style="color: white; -webkit-text-fill-color: white;">UserFeedback Admin</a>
+            <a href="../admin" class="brand" style="color: white; -webkit-text-fill-color: white;"><?php echo \App\Helpers\Config::get('site_name'); ?> Admin</a>
             <div class="nav-links">
                 <a href="../admin" class="btn" style="color: white; opacity: 0.8;">Feedback Management</a>
                 <a href="../public/" class="btn" style="color: white; opacity: 0.8;">Back to Site</a>

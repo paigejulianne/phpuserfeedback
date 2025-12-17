@@ -13,4 +13,7 @@ return [
     'mail_port' => 587,
     'mail_from' => 'noreply@phpuserfeedback.com',
     'mail_from_name' => 'UserFeedback Support',
+    
+    // Site Settings
+    'site_name' => 'UserFeedback',
 ];

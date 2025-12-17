@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UserFeedback - Share Your Ideas</title>
+    <title><?php echo \App\Helpers\Config::get('site_name'); ?> - Share Your Ideas</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar">
         <div class="container navbar-content">
-            <a href="index.php" class="brand">UserFeedback</a>
+            <a href="index.php" class="brand"><?php echo \App\Helpers\Config::get('site_name'); ?></a>
             <div class="nav-links" style="display: flex; align-items: center; gap: 1rem;">
                 <?php if ($isLoggedIn): ?>
                     <a href="profile" style="color: var(--text-secondary); font-size: 0.9rem; text-decoration: none; font-weight: 500;">Hey, <?php echo htmlspecialchars($user['username']); ?></a>

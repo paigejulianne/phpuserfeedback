@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - UserFeedback</title>
+    <title>Admin Dashboard - <?php echo \App\Helpers\Config::get('site_name'); ?></title>
     <link rel="stylesheet" href="../assets/index.css">
 </head>
 <body>
     <nav class="navbar" style="background: #1e293b; border-bottom: none;">
         <div class="container navbar-content">
-            <a href="../public/" class="brand" style="color: white; -webkit-text-fill-color: white;">UserFeedback Admin</a>
+            <a href="../public/" class="brand" style="color: white; -webkit-text-fill-color: white;"><?php echo \App\Helpers\Config::get('site_name'); ?> Admin</a>
             <div class="nav-links">
                 <a href="admin/tokens" class="btn" style="color: white; opacity: 0.8;">API Tokens</a>
                 <a href="../public/" class="btn" style="color: white; opacity: 0.8;">Back to Site</a>
